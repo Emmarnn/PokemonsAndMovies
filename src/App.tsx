@@ -69,8 +69,8 @@ const App: React.FC = () => (
             <IonIcon aria-hidden="true" icon={ellipse} />
             <IonLabel>Pokémons</IonLabel>
           </IonTabButton>
-          <IonTabButton tab="tab3" href="/movies">
-            <IonIcon aria-hidden="true" icon={square} />
+          <IonTabButton tab="tab3" href="/movies" className='buttonMovies'>
+            <IonIcon aria-hidden="true" icon={square} className='buttonMovies' />
             <IonLabel>Movies</IonLabel>
           </IonTabButton>
           <Route path="/movies" component={MoviesPage} exact={true} />

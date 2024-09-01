@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import {
   IonPage,
@@ -17,18 +16,18 @@ import {
   IonButton,
   IonSelect,
   IonSelectOption,
-  IonInput,
+  IonSearchbar,
   useIonRouter,
 } from '@ionic/react';
 import ListSkeleton from '../components/ListSkeleton';
-import { Pokemon, PokemonType } from '../types/interface';
+import { Pokemon } from '../types/interface';
 
 const PokemonList: React.FC = () => {
   const [pokemonData, setPokemonData] = useState<Pokemon[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedType, setSelectedType] = useState<string>('');
-  const [searchTerm, setSearchTerm] = useState<string>(''); 
+  const [searchTerm, setSearchTerm] = useState<string>('');
   const router = useIonRouter();
 
   useEffect(() => {
@@ -49,19 +48,25 @@ const PokemonList: React.FC = () => {
       });
   }, []);
 
-  
+  // Filtrer les Pokémon par type et par nom en temps réel
   const filteredPokemon = pokemonData
+  .filter((pokemon) =>
+  pokemon.pokedex_id !==0
+)
     .filter((pokemon) =>
       selectedType ? pokemon.types?.some((type) => type.name === selectedType) : true
     )
     .filter((pokemon) =>
       searchTerm
-        ? pokemon.name.fr.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          pokemon.name.en.toLowerCase().includes(searchTerm.toLowerCase())
+        ? [pokemon.name.fr, pokemon.name.en, pokemon.name.jp]  // Inclure les noms en français, anglais et japonais
+            .some((name) => name.toLowerCase().includes(searchTerm.toLowerCase())) 
+            /*rechercher un pokemon par son id aussi
+            || pokemon.pokedex_id.toString().includes(searchTerm)
+            */
         : true
     );
 
-  
+  // Récupérer les types uniques
   const uniqueTypes = Array.from(
     new Set(pokemonData.flatMap((pokemon) => pokemon.types?.map((type) => type.name) || []))
   );
@@ -81,13 +86,12 @@ const PokemonList: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar>
+        <IonToolbar color={'primary'}>
           <IonTitle>Liste des Pokémons</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent>
         <IonGrid>
-        
           <IonRow>
             <IonCol size="12">
               <IonSelect
@@ -105,14 +109,13 @@ const PokemonList: React.FC = () => {
             </IonCol>
           </IonRow>
 
-          
           <IonRow>
             <IonCol size="12">
-              <IonInput
+              <IonSearchbar
                 value={searchTerm}
-                placeholder="Recherchez par nom"
-                onIonChange={(e) => setSearchTerm(e.detail.value!)}
-                debounce={300}
+                placeholder="Recherchez un pokémon par son nom"
+                onIonInput={(e) => setSearchTerm(e.detail.value!)}
+                debounce={200}
               />
             </IonCol>
           </IonRow>

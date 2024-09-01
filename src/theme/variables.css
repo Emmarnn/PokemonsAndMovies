@@ -1,2 +1,20 @@
 /* For information on how to create your own theme, please see:
 http://ionicframework.com/docs/theming/ */
+
+/* .buttonMovies:hover {
+    color: red; 
+  }
+  
+  .buttonMovies:hover ion-icon {
+    color: red;
+  }
+  
+  .buttonMovies:hover::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background-color: red;
+    bottom: 0;
+    left: 0;
+  } */

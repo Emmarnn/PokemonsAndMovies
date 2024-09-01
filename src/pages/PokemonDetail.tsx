@@ -49,6 +49,14 @@ const PokemonDetail: React.FC = () => {
     Normal: '#A8A77A',
   };
 
+  const getTypeColor = () => {
+    if (pokemon && pokemon.types.length > 0) {
+      const primaryType = pokemon.types[0].name;
+      return typeColors[primaryType] || '#ffffff';
+    }
+    return '#ffffff';
+  };
+
   useEffect(() => {
     fetch(`https://tyradex.vercel.app/api/v1/pokemon/${id}`)
       .then((response) => response.json())
@@ -65,14 +73,16 @@ const PokemonDetail: React.FC = () => {
 
   const goToPreviousPokemon = () => {
     const previousId = pokemon?.pokedex_id ? pokemon.pokedex_id - 1 : 1;
-    if (previousId >= 0) {
+    if (previousId >= 1) {
       history.push(`/pokemon-detail/${previousId}`);
     }
   };
 
   const goToNextPokemon = () => {
     const nextId = pokemon?.pokedex_id ? pokemon.pokedex_id + 1 : 1;
+    if (nextId <=1025) {
     history.push(`/pokemon-detail/${nextId}`);
+    }
   };
 
   if (loading) {
@@ -90,9 +100,41 @@ const PokemonDetail: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar>
-          <IonTitle>{pokemon?.name?.fr} (#{pokemon?.pokedex_id})</IonTitle>
-        </IonToolbar>
+
+        {/* bouton flèche - pokemon précédent  */}
+        {pokemon.pokedex_id > 1 && (
+                <IonButton fill='clear'
+                  onClick={goToPreviousPokemon}
+                  style={{
+                    position: 'absolute',
+                    left: '10px',
+                    zIndex: 1,
+                    fontSize: '24px',
+                    color:'black',
+                  }}
+                >
+                  &lt;
+                </IonButton>
+              )}
+
+              {/* bouton flèche - pokemon suivant  */}
+            {pokemon.pokedex_id < 1025 && (
+                <IonButton fill='clear'
+                  onClick={goToNextPokemon}
+                  style={{
+                    position: 'absolute',
+                    right: '10px',
+                    zIndex: 1,
+                    fontSize: '24px',
+                    color:'black',
+                  }}
+                >
+                  &gt;
+                </IonButton>
+              )}
+              
+          <IonTitle style={{backgroundColor: getTypeColor(), padding:'10px', borderRadius:'4px', textAlign:'center', fontSize: '1.2em', fontWeight:'bold' }} >{pokemon?.name?.fr} (#{pokemon?.pokedex_id})</IonTitle>
+          
       </IonHeader>
       <IonContent>
         <IonCard style={{ textAlign: 'center' }}>
@@ -101,17 +143,20 @@ const PokemonDetail: React.FC = () => {
           </IonCardHeader>
           <IonCardContent>
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+
               <IonImg
                 src={pokemon?.sprites?.regular}
                 alt={pokemon?.name?.fr}
                 style={{ width: '200px', height: '200px', margin: '0 10px' }}
               />
+              
               {pokemon?.sprites?.shiny && (
                 <IonImg
                   src={pokemon.sprites.shiny}
                   alt={`${pokemon?.name?.fr} Shiny`}
                   style={{ width: '200px', height: '200px', margin: '0 10px' }}
                 />
+                
               )}
             </div>
 
@@ -119,9 +164,9 @@ const PokemonDetail: React.FC = () => {
               <IonItem>
                 <IonLabel>
                   <h1>Noms</h1>
-                  <p>Français: {pokemon?.name?.fr}</p>
-                  <p>Anglais: {pokemon?.name?.en}</p>
-                  <p>Japonais: {pokemon?.name?.jp}</p>
+                  <p>Français : {pokemon?.name?.fr}</p>
+                  <p>Anglais : {pokemon?.name?.en}</p>
+                  <p>Japonais : {pokemon?.name?.jp}</p>
                 </IonLabel>
               </IonItem>
             </IonList>
@@ -345,6 +390,7 @@ const PokemonDetail: React.FC = () => {
             </IonList>
 
             <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+              {pokemon.pokedex_id > 1 && (
               <IonButton
                 expand="block"
                 style={{ width: '150px', margin: '0 10px' }}
@@ -352,6 +398,7 @@ const PokemonDetail: React.FC = () => {
               >
                 Précédent
               </IonButton>
+              )}
               <IonButton
                 expand="block"
                 style={{ width: '150px', margin: '0 10px' }}
@@ -359,13 +406,14 @@ const PokemonDetail: React.FC = () => {
               >
                 Retour
               </IonButton>
+              {pokemon.pokedex_id < 1025 && (
               <IonButton
                 expand="block"
                 style={{ width: '150px', margin: '0 10px' }}
-                onClick={goToNextPokemon}
-              >
+                onClick={goToNextPokemon}>
                 Suivant
               </IonButton>
+              )}
             </div>
           </IonCardContent>
         </IonCard>
